@@ -1,0 +1,1 @@
+alias SumupIntegration.Sales
