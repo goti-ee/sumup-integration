@@ -30,7 +30,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
     field(:sold_by, :string)
     field(:created_at, :utc_datetime)
     field(:currency, :string)
-    field(:amount, :decimal)
+    field(:amount, :float)
     field(:description, :string, default: "")
     field(:payment_method, Ecto.Enum, values: [:card, :cash, :unknown])
     field(:quantity, :integer)

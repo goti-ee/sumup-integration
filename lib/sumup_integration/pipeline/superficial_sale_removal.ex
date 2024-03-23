@@ -14,7 +14,7 @@ defmodule SumupIntegration.Pipeline.SuperficialSaleRemoval do
     expected_amount = quantity * @superficial_price
 
     if expected_amount === amount do
-      %SaleTransaction{transaction | amount: 0}
+      %SaleTransaction{transaction | amount: 0.0}
     else
       transaction
     end

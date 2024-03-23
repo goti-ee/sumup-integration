@@ -8,7 +8,7 @@ defmodule SumupIntegration.Repo.Migrations.CreateSaleTransaction do
       add :sold_by, :string, null: false
       add :created_at, :utc_datetime, null: false
       add :currency, :string, null: false
-      add :amount, :decimal, null: false
+      add :amount, :float, null: false
       add :description, :string, null: true, default: ""
       add :payment_method, :string, null: false
       add :quantity, :integer, null: false
