@@ -10,6 +10,7 @@ defmodule SumupIntegration.Repo.Migrations.CreateSaleTransaction do
       add :currency, :string, null: false
       add :amount, :float, null: false
       add :description, :string, null: true, default: ""
+      add :price_category_name, :string, null: true, default: ""
       add :payment_method, :string, null: false
       add :quantity, :integer, null: false
       add :event_name, :string, null: true

@@ -8,7 +8,8 @@ defmodule SumupIntegration.Factory do
       created_at: Faker.DateTime.backward(365),
       currency: Faker.Currency.code(),
       amount: Faker.Commerce.price(),
-      description: Faker.Beer.name(),
+      price_category_name:
+        Faker.Util.pick(["Public", "Standard", "Extra", "DJs", "DJ", "Crew", ""]),
       payment_method: Faker.Util.pick([:card, :cash, :unknown]),
       quantity: Faker.random_between(1, 15),
       event_name: nil,

@@ -3,7 +3,7 @@ defmodule SumupIntegration.Sales do
 
   alias SumupIntegration.Repo
   alias SumupIntegration.Sales.{ApiTransaction, SaleTransaction}
-  alias SumupIntegration.Pipeline.{EventDetector, SuperficialSaleRemoval}
+  alias SumupIntegration.Pipeline.{EventDetector, SuperficialSaleRemoval, SaleTypeDetector}
 
   @type pipeline_callback :: ([SaleTransaction] -> [SaleTransaction])
   @type t :: %__MODULE__{
@@ -13,7 +13,7 @@ defmodule SumupIntegration.Sales do
 
   defstruct [:transactions, :last_fetched_id]
 
-  @default_pipeline [&EventDetector.run/1, &SuperficialSaleRemoval.run/1]
+  @default_pipeline [&EventDetector.run/1, &SuperficialSaleRemoval.run/1, &SaleTypeDetector.run/1]
 
   def new() do
     %__MODULE__{}

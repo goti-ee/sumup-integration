@@ -8,7 +8,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
 
   @type transaction_status :: :successful | :failed | :refunded | :pending | :unknown
   @type payment_method :: :card | :cash | :unknown
-  @type sale_type :: :public | :crew | :dj
+  @type sale_type :: :public | :crew | :free
 
   @type t :: %__MODULE__{
           transaction_id: String.t(),
@@ -20,6 +20,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
           description: String.t(),
           payment_method: payment_method(),
           quantity: pos_integer(),
+          price_category_name: String.t(),
           event_name: String.t() | nil,
           sale_type: sale_type() | nil
         }
@@ -34,8 +35,9 @@ defmodule SumupIntegration.Sales.SaleTransaction do
     field(:description, :string, default: "")
     field(:payment_method, Ecto.Enum, values: [:card, :cash, :unknown])
     field(:quantity, :integer)
+    field(:price_category_name, :string, default: "")
     field(:event_name, :string)
-    field(:sale_type, Ecto.Enum, values: [:public, :crew, :dj])
+    field(:sale_type, Ecto.Enum, values: [:public, :crew, :free])
   end
 
   @spec get_last_transaction_id!() :: String.t() | nil
@@ -68,7 +70,8 @@ defmodule SumupIntegration.Sales.SaleTransaction do
         :payment_method,
         :quantity,
         :event_name,
-        :sale_type
+        :sale_type,
+        :price_category_name
       ]
     )
     |> validate_required([

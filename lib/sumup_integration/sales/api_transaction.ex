@@ -79,7 +79,7 @@ defmodule SumupIntegration.Sales.ApiTransaction do
       description: Map.get(opts, "name", "") |> String.trim(),
       payment_method: Map.fetch!(opts, "payment_type") |> parse_payment_method(),
       quantity: Map.get(opts, "quantity", 0),
-      sale_type: Map.get(opts, "description", "") |> parse_sale_type()
+      price_category_name: Map.get(opts, "description", "")
     }
   end
 
@@ -99,16 +99,6 @@ defmodule SumupIntegration.Sales.ApiTransaction do
   defp parse_payment_method("POS"), do: :card
   defp parse_payment_method("ECOM"), do: :card
   defp parse_payment_method(_), do: :unknown
-
-  defp parse_sale_type(input_description) do
-    description = String.downcase(input_description)
-
-    cond do
-      String.contains?(description, "dj") -> :dj
-      String.contains?(description, "crew") -> :crew
-      true -> :public
-    end
-  end
 
   defp api_key do
     Application.fetch_env!(:sumup_integration, :sumup_api_key)
