@@ -7,7 +7,8 @@ defmodule SumupIntegration.MixProject do
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
 
@@ -23,10 +24,13 @@ defmodule SumupIntegration.MixProject do
   defp deps do
     [
       {:req, "~> 0.4.0"},
-      {:poison, "~> 5.0"},
       {:flow, "~> 1.0"},
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"},
+      {:faker, "~> 0.18", only: :test}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 end

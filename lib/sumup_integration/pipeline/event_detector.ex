@@ -3,20 +3,28 @@ defmodule SumupIntegration.Pipeline.EventDetector do
 
   @type event :: %{name: String.t(), start_at: DateTime.t(), end_at: DateTime.t()}
 
+  @spec run([SaleTransaction.t()]) :: [SaleTransaction.t()]
+  @spec run([SaleTransaction.t()], [event()]) :: [SaleTransaction.t()]
   def run(transactions) do
+    events = get_events()
+
+    run(transactions, events)
+  end
+
+  def run(transactions, events) do
     transactions
     |> Enum.map(fn %SaleTransaction{created_at: created_at} = transaction ->
-      case match_event(created_at) do
+      case match_event(created_at, events) do
         {:ok, %{name: name}} -> %SaleTransaction{transaction | event_name: name}
         {:error, _reason} -> transaction
       end
     end)
   end
 
-  @spec match_event(DateTime.t()) :: {:ok, event()} | {:error, :not_found}
-  def match_event(timestamp) do
+  @spec match_event(DateTime.t(), [event()]) :: {:ok, event()} | {:error, :not_found}
+  def match_event(timestamp, events) do
     match =
-      get_events()
+      events
       |> Enum.find(nil, fn %{start_at: start_at, end_at: end_at} ->
         after_start = DateTime.compare(start_at, timestamp) != :gt
         before_end = DateTime.compare(timestamp, end_at) != :gt

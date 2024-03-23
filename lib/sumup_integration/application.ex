@@ -10,8 +10,20 @@ defmodule SumupIntegration.Application do
       {SumupIntegration.Worker, []}
     ]
 
-    #  auto_shutdown: :any_significant
-    opts = [strategy: :one_for_one, name: SumupIntegration.Supervisor]
+    opts = [
+      strategy: :one_for_one,
+      name: SumupIntegration.Supervisor,
+      auto_shutdown: auto_shutdown()
+    ]
+
     Supervisor.start_link(children, opts)
+  end
+
+  defp auto_shutdown() do
+    if Application.fetch_env!(:sumup_integration, :enabled_auto_exit?) do
+      :any_significant
+    else
+      :never
+    end
   end
 end
