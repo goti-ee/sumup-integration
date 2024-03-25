@@ -285,5 +285,117 @@
     "vat_amount": 0,
     "vat_rates": [],
     "verification_method": "none"
+  },
+  "bf5f3a1f-38c2-4902-ac23-60d6c151286e": {
+    "amount": 0.01,
+    "client_transaction_id": "urn:sumup:pos:sale:ABC11YX4:bf5f3a1f-38c2-4902-ac23-60d6c151286e;2",
+    "currency": "EUR",
+    "device_info": {
+      "model": "iPhone12,1",
+      "name": "iPhone",
+      "system_name": "iOS",
+      "system_version": "16.5",
+      "uuid": "A3D5447C-4FFC-49F6-C513-92FC87F1AE8B"
+    },
+    "entry_mode": "none",
+    "events": [],
+    "horizontal_accuracy": 35,
+    "id": "bf5f3a1f-38c2-4902-ac23-60d6c151286e",
+    "installments_count": 1,
+    "internal_id": 6066022095,
+    "lat": 0,
+    "links": [],
+    "local_time": "2022-03-16T23:01:33.594Z",
+    "location": {
+      "horizontal_accuracy": 35,
+      "lat": 0,
+      "lon": 0
+    },
+    "lon": 0,
+    "merchant_code": "ABC11YX4",
+    "merchant_id": 0,
+    "payment_type": "POS",
+    "payout_plan": "SINGLE_PAYMENT",
+    "payout_type": "BANK_ACCOUNT",
+    "payouts_received": 0,
+    "payouts_total": 0,
+    "product_summary": "1 x Orange juice",
+    "products": [
+      {
+        "description": "Public ",
+        "name": "Orange juice",
+        "price": 0.01,
+        "quantity": 1,
+        "total_price": 0.01
+      }
+    ],
+    "simple_payment_type": "POS",
+    "simple_status": "SUCCESSFUL",
+    "status": "SUCCESSFUL",
+    "tax_enabled": false,
+    "timestamp": "2022-03-16T23:01:33.594Z",
+    "tip_amount": 0,
+    "transaction_code": "TCTZ30FF7C",
+    "transaction_events": [],
+    "username": "john.doe@goti.test.ee",
+    "vat_amount": 0,
+    "vat_rates": [],
+    "verification_method": "none"
+  },
+  "19c8d676-f8e8-4f4d-87ef-bb129f0d51d2": {
+    "amount": 1,
+    "client_transaction_id": "urn:sumup:pos:sale:ABC11YX4:19c8d676-f8e8-4f4d-87ef-bb129f0d51d2;2",
+    "currency": "EUR",
+    "device_info": {
+      "model": "iPhone12,1",
+      "name": "iPhone",
+      "system_name": "iOS",
+      "system_version": "16.5",
+      "uuid": "A3D5447C-4FFC-49F6-C513-92FC87F1AE8B"
+    },
+    "entry_mode": "none",
+    "events": [],
+    "horizontal_accuracy": 35,
+    "id": "19c8d676-f8e8-4f4d-87ef-bb129f0d51d2",
+    "installments_count": 1,
+    "internal_id": 6066022095,
+    "lat": 0,
+    "links": [],
+    "local_time": "2022-03-16T23:03:33.594Z",
+    "location": {
+      "horizontal_accuracy": 35,
+      "lat": 0,
+      "lon": 0
+    },
+    "lon": 0,
+    "merchant_code": "ABC11YX4",
+    "merchant_id": 0,
+    "payment_type": "POS",
+    "payout_plan": "SINGLE_PAYMENT",
+    "payout_type": "BANK_ACCOUNT",
+    "payouts_received": 0,
+    "payouts_total": 0,
+    "product_summary": "1 x Tomato juice",
+    "products": [
+      {
+        "description": "DJs",
+        "name": "Tomato juice",
+        "price": 1,
+        "quantity": 1,
+        "total_price": 1
+      }
+    ],
+    "simple_payment_type": "POS",
+    "simple_status": "SUCCESSFUL",
+    "status": "SUCCESSFUL",
+    "tax_enabled": false,
+    "timestamp": "2022-03-16T23:03:33.594Z",
+    "tip_amount": 0,
+    "transaction_code": "TCTZ30FF7C",
+    "transaction_events": [],
+    "username": "john.doe@goti.test.ee",
+    "vat_amount": 0,
+    "vat_rates": [],
+    "verification_method": "none"
   }
 }

@@ -2,6 +2,7 @@ defmodule SumupIntegration.Sales.SalesTest do
   use SumupIntegration.RepoCase
 
   import SumupIntegration.Factory
+  import Ecto.Query
 
   alias SumupIntegration.Sales
   alias SumupIntegration.Sales.SaleTransaction
@@ -11,17 +12,141 @@ defmodule SumupIntegration.Sales.SalesTest do
                                __DIR__
                              )
   @transactions_fixture_page_a_path Path.expand(
-                              "../../support/fixtures/transactions_page_a.json",
-                              __DIR__
-                            )
+                                      "../../support/fixtures/transactions_page_a.json",
+                                      __DIR__
+                                    )
   @transactions_fixture_page_b_path Path.expand(
-                              "../../support/fixtures/transactions_page_b.json",
-                              __DIR__
-                            )
+                                      "../../support/fixtures/transactions_page_b.json",
+                                      __DIR__
+                                    )
   @transaction_details_path Path.expand(
                               "../../support/fixtures/transactions_details.json",
                               __DIR__
                             )
+
+  describe "Full pipeline" do
+    test "fetches all transactions, applies default transformations and inserts into DB" do
+      Req.Test.stub(SumupIntegration.Sales.ApiTransaction.TransactionsEndpoint, fn conn ->
+        Req.Test.json(conn, transactions_fixture())
+      end)
+
+      Req.Test.stub(SumupIntegration.Sales.ApiTransaction.TransactionEndpoint, fn conn ->
+        %Plug.Conn{params: %{"id" => transaction_id}} =
+          conn
+          |> Plug.Conn.fetch_query_params()
+
+        Req.Test.json(conn, transaction_details_fixture(transaction_id))
+      end)
+
+      Sales.new()
+      |> Sales.fetch!()
+      |> Sales.run_pipeline!()
+      |> Sales.insert!()
+
+      transactions = Repo.all(from(SaleTransaction))
+
+      assert [
+               %SaleTransaction{
+                 transaction_id: "25023842-9acd-422d-9285-e540641fa2e6",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:34:53Z],
+                 currency: "EUR",
+                 amount: 9.0,
+                 description: "Apple shot",
+                 payment_method: :card,
+                 quantity: 2,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: :public
+               },
+               %SaleTransaction{
+                 transaction_id: "016ec417-1fba-4b08-98bc-b1451895d52c",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:40:33Z],
+                 currency: "EUR",
+                 amount: 1.75,
+                 description: "IMAGINARY JUICE 0.5l",
+                 payment_method: :card,
+                 quantity: 1,
+                 price_category_name: "Crew ",
+                 event_name: nil,
+                 sale_type: :crew
+               },
+               %SaleTransaction{
+                 transaction_id: "a64de647-4210-42a1-afc3-5df3fe298589",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:51:00Z],
+                 currency: "EUR",
+                 amount: 6.0,
+                 description: "Apple shot",
+                 payment_method: :card,
+                 quantity: 2,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: :public
+               },
+               %SaleTransaction{
+                 transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:56:33Z],
+                 currency: "EUR",
+                 amount: 9.0,
+                 description: "Сarrot juice",
+                 payment_method: :cash,
+                 quantity: 1,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: :public
+               },
+               %SaleTransaction{
+                 transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:56:33Z],
+                 currency: "EUR",
+                 amount: 9.0,
+                 description: "Apple shot",
+                 payment_method: :cash,
+                 quantity: 3,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: :public
+               },
+               %SaleTransaction{
+                 transaction_id: "bf5f3a1f-38c2-4902-ac23-60d6c151286e",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 23:01:33Z],
+                 currency: "EUR",
+                 amount: +0.0,
+                 description: "Orange juice",
+                 payment_method: :cash,
+                 quantity: 1,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: :free
+               },
+               %SaleTransaction{
+                 transaction_id: "19c8d676-f8e8-4f4d-87ef-bb129f0d51d2",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 23:03:33Z],
+                 currency: "EUR",
+                 amount: 1.0,
+                 description: "Tomato juice",
+                 payment_method: :cash,
+                 quantity: 1,
+                 price_category_name: "DJs",
+                 event_name: nil,
+                 sale_type: :free
+               }
+             ] = transactions
+    end
+  end
 
   describe "get_last_offset/1" do
     setup do
@@ -135,6 +260,34 @@ defmodule SumupIntegration.Sales.SalesTest do
                  price_category_name: "Public ",
                  event_name: nil,
                  sale_type: nil
+               },
+               %SaleTransaction{
+                 transaction_id: "bf5f3a1f-38c2-4902-ac23-60d6c151286e",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 23:01:33Z],
+                 currency: "EUR",
+                 amount: 0.01,
+                 description: "Orange juice",
+                 payment_method: :cash,
+                 quantity: 1,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: nil
+               },
+               %SaleTransaction{
+                 transaction_id: "19c8d676-f8e8-4f4d-87ef-bb129f0d51d2",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 23:03:33Z],
+                 currency: "EUR",
+                 amount: 1.0,
+                 description: "Tomato juice",
+                 payment_method: :cash,
+                 quantity: 1,
+                 price_category_name: "DJs",
+                 event_name: nil,
+                 sale_type: nil
                }
              ] = transactions
     end
@@ -155,9 +308,11 @@ defmodule SumupIntegration.Sales.SalesTest do
     end
 
     test "uses pagination if present", %{sales: sales} do
-      %{"transactionsA" => transactionsA, "transactionsB" => transactionsB } =  paginated_transactions_fixture()
+      %{"transactionsA" => transactionsA, "transactionsB" => transactionsB} =
+        paginated_transactions_fixture()
 
-      lastPageAId = transactionsA
+      lastPageAId =
+        transactionsA
         |> Map.get("items")
         |> List.last()
         |> Map.get("id")
@@ -167,10 +322,11 @@ defmodule SumupIntegration.Sales.SalesTest do
           conn
           |> Plug.Conn.fetch_query_params()
 
-        result_fixture = case params do
-          %{"oldest_ref" => ^lastPageAId} -> transactionsB
-          _ -> transactionsA
-        end
+        result_fixture =
+          case params do
+            %{"oldest_ref" => ^lastPageAId} -> transactionsB
+            _ -> transactionsA
+          end
 
         Req.Test.json(conn, result_fixture)
       end)
@@ -186,22 +342,22 @@ defmodule SumupIntegration.Sales.SalesTest do
       transactions = Sales.fetch!(sales) |> Sales.to_transactions()
 
       assert [
-        %SaleTransaction{
-          transaction_id: "25023842-9acd-422d-9285-e540641fa2e6",
-        },
-        %SaleTransaction{
-          transaction_id: "016ec417-1fba-4b08-98bc-b1451895d52c",
-        },
-        %SaleTransaction{
-          transaction_id: "a64de647-4210-42a1-afc3-5df3fe298589",
-        },
-        %SaleTransaction{
-          transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b",
-        },
-        %SaleTransaction{
-          transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b",
-        }
-      ] = transactions
+               %SaleTransaction{
+                 transaction_id: "25023842-9acd-422d-9285-e540641fa2e6"
+               },
+               %SaleTransaction{
+                 transaction_id: "016ec417-1fba-4b08-98bc-b1451895d52c"
+               },
+               %SaleTransaction{
+                 transaction_id: "a64de647-4210-42a1-afc3-5df3fe298589"
+               },
+               %SaleTransaction{
+                 transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b"
+               },
+               %SaleTransaction{
+                 transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b"
+               }
+             ] = transactions
     end
   end
 
@@ -249,10 +405,12 @@ defmodule SumupIntegration.Sales.SalesTest do
 
   defp paginated_transactions_fixture() do
     %{
-      "transactionsA" => @transactions_fixture_page_a_path
+      "transactionsA" =>
+        @transactions_fixture_page_a_path
         |> File.read!()
         |> Jason.decode!(),
-      "transactionsB" => @transactions_fixture_page_b_path
+      "transactionsB" =>
+        @transactions_fixture_page_b_path
         |> File.read!()
         |> Jason.decode!()
     }

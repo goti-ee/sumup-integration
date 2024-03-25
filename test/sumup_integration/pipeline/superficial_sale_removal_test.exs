@@ -14,8 +14,8 @@ defmodule SumupIntegration.Pipeline.SuperficialSaleRemovalTest do
 
       assert [
                ^transactionA,
-               %SaleTransaction{amount: 0, quantity: 3},
-               %SaleTransaction{amount: 0, quantity: 1}
+               %SaleTransaction{amount: +0.0, quantity: 3},
+               %SaleTransaction{amount: +0.0, quantity: 1}
              ] = SuperficialSaleRemoval.run([transactionA, transactionB, transcationC])
     end
 
