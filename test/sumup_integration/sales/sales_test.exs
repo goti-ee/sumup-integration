@@ -1,10 +1,136 @@
 defmodule SumupIntegration.Sales.SalesTest do
-  use ExUnit.Case
+  use SumupIntegration.RepoCase
 
   import SumupIntegration.Factory
 
   alias SumupIntegration.Sales
   alias SumupIntegration.Sales.SaleTransaction
+
+  @transactions_fixture_path Path.expand(
+                               "../../support/fixtures/transactions_simple.json",
+                               __DIR__
+                             )
+  @transaction_details_path Path.expand(
+                              "../../support/fixtures/transactions_details_simple.json",
+                              __DIR__
+                            )
+
+  describe "get_last_offset/1" do
+    setup do
+      sales = Sales.new()
+
+      transactions = [
+        insert!(:sale_transaction, created_at: ~U[2022-03-12 03:05:56Z]),
+        insert!(:sale_transaction, created_at: ~U[2022-03-13 23:11:56Z]),
+        insert!(:sale_transaction, created_at: ~U[2022-03-15 16:12:56Z])
+      ]
+
+      %{transactions: transactions, sales: sales}
+    end
+
+    test "stores last fetched transaction id", %{transactions: transactions, sales: sales} do
+      %SaleTransaction{transaction_id: expected_transaction_id} = List.last(transactions)
+
+      assert %Sales{last_fetched_id: ^expected_transaction_id} = Sales.get_last_offset!(sales)
+    end
+  end
+
+  describe "fetch!/1" do
+    setup do
+      sales = Sales.new()
+
+      %{sales: sales}
+    end
+
+    test "fetches all transaction and decodes them", %{sales: sales} do
+      Req.Test.stub(SumupIntegration.Sales.ApiTransaction.TransactionsEndpoint, fn conn ->
+        Req.Test.json(conn, transactions_fixture())
+      end)
+
+      Req.Test.stub(SumupIntegration.Sales.ApiTransaction.TransactionEndpoint, fn conn ->
+        %Plug.Conn{params: %{"id" => transaction_id}} =
+          conn
+          |> Plug.Conn.fetch_query_params()
+
+        Req.Test.json(conn, transaction_details_fixture(transaction_id))
+      end)
+
+      transactions = Sales.fetch!(sales) |> Sales.to_transactions()
+
+      assert [
+               %SaleTransaction{
+                 transaction_id: "25023842-9acd-422d-9285-e540641fa2e6",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:34:53Z],
+                 currency: "EUR",
+                 amount: 9.0,
+                 description: "Apple shot",
+                 payment_method: :card,
+                 quantity: 2,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: nil
+               },
+               %SaleTransaction{
+                 transaction_id: "016ec417-1fba-4b08-98bc-b1451895d52c",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:40:33Z],
+                 currency: "EUR",
+                 amount: 1.75,
+                 description: "IMAGINARY JUICE 0.5l",
+                 payment_method: :card,
+                 quantity: 1,
+                 price_category_name: "Crew ",
+                 event_name: nil,
+                 sale_type: nil
+               },
+               %SaleTransaction{
+                 transaction_id: "a64de647-4210-42a1-afc3-5df3fe298589",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:51:00Z],
+                 currency: "EUR",
+                 amount: 6.0,
+                 description: "Apple shot",
+                 payment_method: :card,
+                 quantity: 2,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: nil
+               },
+               %SaleTransaction{
+                 transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:56:33Z],
+                 currency: "EUR",
+                 amount: 9.0,
+                 description: "Сarrot juice",
+                 payment_method: :cash,
+                 quantity: 1,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: nil
+               },
+               %SaleTransaction{
+                 transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b",
+                 status: :successful,
+                 sold_by: "john.doe@goti.test.ee",
+                 created_at: ~U[2022-03-16 22:56:33Z],
+                 currency: "EUR",
+                 amount: 9.0,
+                 description: "Apple shot",
+                 payment_method: :cash,
+                 quantity: 3,
+                 price_category_name: "Public ",
+                 event_name: nil,
+                 sale_type: nil
+               }
+             ] = transactions
+    end
+  end
 
   describe "run_pipeline!/1" do
     test "executes all given pipelines in order" do
@@ -40,5 +166,20 @@ defmodule SumupIntegration.Sales.SalesTest do
   defp pipeline_c(transcations) do
     transcations
     |> Enum.map(&%SaleTransaction{&1 | quantity: 9999})
+  end
+
+  defp transactions_fixture() do
+    @transactions_fixture_path
+    |> File.read!()
+    |> Jason.decode!()
+  end
+
+  defp transaction_details_fixture(id) do
+    details =
+      @transaction_details_path
+      |> File.read!()
+      |> Jason.decode!()
+
+    Map.fetch!(details, id)
   end
 end

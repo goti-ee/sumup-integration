@@ -2,7 +2,7 @@ defmodule SumupIntegration.Worker do
   use Task
 
   alias SumupIntegration.Sales
-  alias SumupIntegration.Pipeline.{EventDetector, SuperficialSaleRemoval}
+  alias SumupIntegration.Pipeline.{EventDetector, SuperficialSaleRemoval, SaleTypeDetector}
 
   require Logger
 
@@ -31,7 +31,8 @@ defmodule SumupIntegration.Worker do
     |> Sales.fetch!()
     |> Sales.run_pipeline!([
       &EventDetector.run/1,
-      &SuperficialSaleRemoval.run/1
+      &SuperficialSaleRemoval.run/1,
+      &SaleTypeDetector.run/1
     ])
     |> Sales.insert!()
   end

@@ -15,54 +15,92 @@ defmodule SumupIntegration.Sales.ApiTransaction do
 
   @spec fetch!(String.t() | nil) :: [t()]
   def fetch!(last_fetched_id) do
+    parallel? = Keyword.get(config(), :parallel?, true)
     initial_query = if last_fetched_id != nil, do: build_query(last_fetched_id), else: ""
 
-    do_fetch_sales!(initial_query)
-    |> Flow.from_enumerable(max_demand: 10)
-    |> Flow.filter(fn
-      # Let's drop refunded right away. It seems API fails for them
-      %{"status" => "REFUNDED"} -> false
-      # Failed are not useful
-      %{"status" => "FAILED"} -> false
-      _ -> true
-    end)
-    |> Flow.flat_map(fn sale ->
-      %{"products" => products} =
-        Req.get!(
-          "https://api.sumup.com/v0.1/me/transactions",
-          params: [id: Map.fetch!(sale, "id")],
-          auth: {:bearer, api_key()}
-        ).body
-
-      products
-      |> Enum.map(fn product ->
-        Map.merge(sale, %{
-          "name" => Map.get(product, "name", ""),
-          "total_price" => Map.fetch!(product, "total_price"),
-          "quantity" => Map.get(product, "quantity", 0),
-          "description" => Map.get(product, "description", "")
-        })
-      end)
-    end)
-    |> Enum.to_list()
+    fetch_base_transactions!(initial_query)
+    |> process_transactions(parallel?)
   end
 
-  defp do_fetch_sales!(query, agg \\ []) do
-    %{"items" => items} =
-      resp =
-      Req.get!(
-        "https://api.sumup.com/v0.1/me/transactions/history#{if query !== "", do: "?" <> query, else: query}",
-        auth: {:bearer, api_key()}
-      ).body
+  defp build_query(transaction_id),
+    do: "limit=10&oldest_ref=#{transaction_id}&order=ascending&skip_tx_result=true"
+
+  defp fetch_base_transactions!(query, agg \\ []) do
+    %{"items" => items} = resp = get_sumup_transactions(query)
 
     next_items = agg ++ items
 
     links = Map.get(resp, "links", [])
 
     case Enum.find(links, nil, &match_next_link/1) do
-      %{"href" => next_query, "rel" => "next"} -> do_fetch_sales!(next_query, next_items)
+      %{"href" => next_query, "rel" => "next"} -> fetch_base_transactions!(next_query, next_items)
       _ -> next_items
     end
+  end
+
+  defp get_sumup_transactions(query) do
+    transactions_req_options = Keyword.get(config(), :transactions_req_options, [])
+
+    response =
+      [
+        base_url:
+          "https://api.sumup.com/v0.1/me/transactions/history#{if query !== "", do: "?" <> query, else: query}"
+      ]
+      |> Keyword.merge(transactions_req_options)
+      |> Req.request!()
+
+    response.body
+  end
+
+  defp match_next_link(%{"rel" => "next"}), do: true
+  defp match_next_link(_), do: false
+
+  defp process_transactions(transactions, _parallel? = true) do
+    transactions
+    |> Flow.from_enumerable(max_demand: 10)
+    |> Flow.filter(&filter_by_status/1)
+    |> Flow.flat_map(&enrich_with_details/1)
+    |> Enum.to_list()
+  end
+
+  defp process_transactions(transactions, _parallel? = false) do
+    transactions
+    |> Enum.filter(&filter_by_status/1)
+    |> Enum.flat_map(&enrich_with_details/1)
+  end
+
+  # Let's drop refunded right away. It seems API details fails for them
+  defp filter_by_status(%{"status" => "REFUNDED"}), do: false
+  # Failed are not useful
+  defp filter_by_status(%{"status" => "FAILED"}), do: false
+  defp filter_by_status(_), do: true
+
+  defp enrich_with_details(sale) do
+    %{"products" => products} = get_sumup_transaction(Map.fetch!(sale, "id"))
+
+    products
+    |> Enum.map(fn product ->
+      Map.merge(sale, %{
+        "name" => Map.get(product, "name", ""),
+        "total_price" => Map.fetch!(product, "total_price"),
+        "quantity" => Map.get(product, "quantity", 0),
+        "description" => Map.get(product, "description", "")
+      })
+    end)
+  end
+
+  defp get_sumup_transaction(id) do
+    transaction_req_options = Keyword.get(config(), :transaction_req_options, [])
+
+    response =
+      [
+        base_url: "https://api.sumup.com/v0.1/me/transactions",
+        params: [id: id]
+      ]
+      |> Keyword.merge(transaction_req_options)
+      |> Req.request!()
+
+    response.body
   end
 
   @spec to_sale_transaction!(t()) :: map()
@@ -83,12 +121,6 @@ defmodule SumupIntegration.Sales.ApiTransaction do
     }
   end
 
-  defp build_query(transaction_id),
-    do: "limit=10&oldest_ref=#{transaction_id}&order=ascending&skip_tx_result=true"
-
-  defp match_next_link(%{"rel" => "next"}), do: true
-  defp match_next_link(_), do: false
-
   defp parse_status("SUCCESSFUL"), do: :successful
   defp parse_status("FAILED"), do: :failed
   defp parse_status("REFUNDED"), do: :refunded
@@ -100,7 +132,5 @@ defmodule SumupIntegration.Sales.ApiTransaction do
   defp parse_payment_method("ECOM"), do: :card
   defp parse_payment_method(_), do: :unknown
 
-  defp api_key do
-    Application.fetch_env!(:sumup_integration, :sumup_api_key)
-  end
+  defp config(), do: Application.get_env(:sumup_integration, __MODULE__, [])
 end

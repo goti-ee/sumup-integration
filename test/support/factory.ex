@@ -1,4 +1,6 @@
 defmodule SumupIntegration.Factory do
+  alias SumupIntegration.Repo
+
   def build(:sale_transaction) do
     %SumupIntegration.Sales.SaleTransaction{
       transaction_id: Faker.UUID.v4(),
@@ -13,11 +15,15 @@ defmodule SumupIntegration.Factory do
       payment_method: Faker.Util.pick([:card, :cash, :unknown]),
       quantity: Faker.random_between(1, 15),
       event_name: nil,
-      sale_type: Faker.Util.pick([nil, :public, :crew, :dj])
+      sale_type: Faker.Util.pick([nil, :public, :crew, :free])
     }
   end
 
   def build(factory_name, attributes) do
     factory_name |> build() |> struct!(attributes)
+  end
+
+  def insert!(factory_name, attributes \\ []) do
+    factory_name |> build(attributes) |> Repo.insert!()
   end
 end
