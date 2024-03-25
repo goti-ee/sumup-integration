@@ -42,7 +42,7 @@ defmodule SumupIntegration.Sales.SalesTest do
       %{sales: sales}
     end
 
-    test "fetches all transaction and decodes them", %{sales: sales} do
+    test "fetches all transaction by default and decodes them", %{sales: sales} do
       Req.Test.stub(SumupIntegration.Sales.ApiTransaction.TransactionsEndpoint, fn conn ->
         Req.Test.json(conn, transactions_fixture())
       end)
@@ -129,6 +129,21 @@ defmodule SumupIntegration.Sales.SalesTest do
                  sale_type: nil
                }
              ] = transactions
+    end
+
+    test "uses last_fetched_id to skip already fetched transactions", %{sales: sales} do
+      last_fetched_id = "a64de647-4210-42a1-afc3-5df3fe298589"
+      sales = %Sales{sales | last_fetched_id: last_fetched_id}
+
+      Req.Test.stub(SumupIntegration.Sales.ApiTransaction.TransactionsEndpoint, fn conn ->
+        %Plug.Conn{params: %{"oldest_ref" => ^last_fetched_id}} =
+          conn
+          |> Plug.Conn.fetch_query_params()
+
+        Req.Test.json(conn, %{"items" => []})
+      end)
+
+      assert [] = Sales.fetch!(sales) |> Sales.to_transactions()
     end
   end
 
