@@ -1,0 +1,66 @@
+{
+  "items": [
+    {
+      "user": "john.doe@goti.test.ee",
+      "type": "PAYMENT",
+      "transaction_id": "1eee3e55-0697-6e3f-932a-1bb0ecfcf7b0",
+      "transaction_code": "TEYA6QP2PX",
+      "timestamp": "2022-03-16T22:34:13.152Z",
+      "status": "FAILED",
+      "refunded_amount": 0,
+      "product_summary": "IMAGINARY JUICE 0.5l",
+      "payouts_total": 0,
+      "payouts_received": 0,
+      "payout_plan": "SINGLE_PAYMENT",
+      "payment_type": "POS",
+      "internal_tx_result": "20",
+      "internal_status": "CANCELLED",
+      "internal_payment_type": 10,
+      "internal_id": 600018614,
+      "internal_client_transaction_id": "urn:sumup:pos:sale:TEYA6QP2PX:1eee3e55-0697-6e3f-932a-1bb0ecfcf7b0;2",
+      "installments_count": 1,
+      "id": "1eee3e55-0697-6e3f-932a-1bb0ecfcf7b0",
+      "entry_mode": "na",
+      "currency": "EUR",
+      "card_type": "UNKNOWN",
+      "amount": 3.5
+    },
+    {
+      "user": "john.doe@goti.test.ee",
+      "type": "PAYMENT",
+      "transaction_id": "25023842-9acd-422d-9285-e540641fa2e6",
+      "transaction_code": "TAR9XPU333",
+      "timestamp": "2022-03-16T22:34:53.787Z",
+      "status": "SUCCESSFUL",
+      "refunded_amount": 0,
+      "product_summary": "2 x Apple shot",
+      "payouts_total": 1,
+      "payouts_received": 1,
+      "payout_type": "BANK_ACCOUNT",
+      "payout_plan": "SINGLE_PAYMENT",
+      "payout_date": "2022-03-18",
+      "payment_type": "POS",
+      "internal_tx_result": "11",
+      "internal_status": "CAPTURED",
+      "internal_payment_type": 10,
+      "internal_id": 6066022095,
+      "internal_entry_mode_id": 35,
+      "internal_client_transaction_id": "urn:sumup:pos:sale:ABC11YX4:25023842-9acd-422d-9285-e540641fa2e6;2",
+      "internal_card_type": "MC",
+      "internal_card_scheme": "MASTER",
+      "internal_bin": "535562",
+      "installments_count": 1,
+      "id": "25023842-9acd-422d-9285-e540641fa2e6",
+      "entry_mode": "contactless",
+      "currency": "EUR",
+      "card_type": "MASTERCARD",
+      "amount": 9
+    }
+  ],
+  "links": [
+    {
+      "href": "limit=10&oldest_ref=25023842-9acd-422d-9285-e540641fa2e6&order=ascending&skip_tx_result=true",
+      "rel": "next"
+    }
+  ]
+}

@@ -10,8 +10,16 @@ defmodule SumupIntegration.Sales.SalesTest do
                                "../../support/fixtures/transactions_simple.json",
                                __DIR__
                              )
+  @transactions_fixture_page_a_path Path.expand(
+                              "../../support/fixtures/transactions_page_a.json",
+                              __DIR__
+                            )
+  @transactions_fixture_page_b_path Path.expand(
+                              "../../support/fixtures/transactions_page_b.json",
+                              __DIR__
+                            )
   @transaction_details_path Path.expand(
-                              "../../support/fixtures/transactions_details_simple.json",
+                              "../../support/fixtures/transactions_details.json",
                               __DIR__
                             )
 
@@ -145,6 +153,56 @@ defmodule SumupIntegration.Sales.SalesTest do
 
       assert [] = Sales.fetch!(sales) |> Sales.to_transactions()
     end
+
+    test "uses pagination if present", %{sales: sales} do
+      %{"transactionsA" => transactionsA, "transactionsB" => transactionsB } =  paginated_transactions_fixture()
+
+      lastPageAId = transactionsA
+        |> Map.get("items")
+        |> List.last()
+        |> Map.get("id")
+
+      Req.Test.stub(SumupIntegration.Sales.ApiTransaction.TransactionsEndpoint, fn conn ->
+        %Plug.Conn{params: params} =
+          conn
+          |> Plug.Conn.fetch_query_params()
+
+        result_fixture = case params do
+          %{"oldest_ref" => ^lastPageAId} -> transactionsB
+          _ -> transactionsA
+        end
+
+        Req.Test.json(conn, result_fixture)
+      end)
+
+      Req.Test.stub(SumupIntegration.Sales.ApiTransaction.TransactionEndpoint, fn conn ->
+        %Plug.Conn{params: %{"id" => transaction_id}} =
+          conn
+          |> Plug.Conn.fetch_query_params()
+
+        Req.Test.json(conn, transaction_details_fixture(transaction_id))
+      end)
+
+      transactions = Sales.fetch!(sales) |> Sales.to_transactions()
+
+      assert [
+        %SaleTransaction{
+          transaction_id: "25023842-9acd-422d-9285-e540641fa2e6",
+        },
+        %SaleTransaction{
+          transaction_id: "016ec417-1fba-4b08-98bc-b1451895d52c",
+        },
+        %SaleTransaction{
+          transaction_id: "a64de647-4210-42a1-afc3-5df3fe298589",
+        },
+        %SaleTransaction{
+          transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b",
+        },
+        %SaleTransaction{
+          transaction_id: "18d9a3f6-5261-4e2e-997b-fe4851cf7b2b",
+        }
+      ] = transactions
+    end
   end
 
   describe "run_pipeline!/1" do
@@ -187,6 +245,17 @@ defmodule SumupIntegration.Sales.SalesTest do
     @transactions_fixture_path
     |> File.read!()
     |> Jason.decode!()
+  end
+
+  defp paginated_transactions_fixture() do
+    %{
+      "transactionsA" => @transactions_fixture_page_a_path
+        |> File.read!()
+        |> Jason.decode!(),
+      "transactionsB" => @transactions_fixture_page_b_path
+        |> File.read!()
+        |> Jason.decode!()
+    }
   end
 
   defp transaction_details_fixture(id) do
