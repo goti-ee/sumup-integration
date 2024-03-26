@@ -8,8 +8,7 @@ defmodule SumupIntegration.MixProject do
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env()),
-      aliases: aliases()
+      elixirc_paths: elixirc_paths(Mix.env())
     ]
   end
 
@@ -29,14 +28,9 @@ defmodule SumupIntegration.MixProject do
       {:ecto_sql, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.4"},
+      {:testcontainers, "~> 1.7"},
       {:plug, "~> 1.0", only: :test},
       {:faker, "~> 0.18", only: :test}
-    ]
-  end
-
-  defp aliases do
-    [
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 

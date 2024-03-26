@@ -5,6 +5,10 @@ defmodule SumupIntegration.Application do
 
   @impl true
   def start(_type, _args) do
+    if Application.get_env(:sumup_integration, :testcontainers, false) do
+      {:ok, _container} = Testcontainers.Ecto.postgres_container(app: :sumup_integration)
+    end
+
     children = [
       SumupIntegration.Repo,
       {SumupIntegration.Worker, []}

@@ -1,11 +1,11 @@
 import Config
 
-config :sumup_integration, SumupIntegration.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "sumup_integration_test",
-  hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+config :logger, level: :warning
+
+config :sumup_integration,
+  testcontainers: true
+
+config :sumup_integration, SumupIntegration.Repo, pool: Ecto.Adapters.SQL.Sandbox
 
 config :sumup_integration, SumupIntegration.Sales.ApiTransaction,
   parallel?: false,
