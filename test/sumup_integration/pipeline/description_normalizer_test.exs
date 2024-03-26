@@ -27,24 +27,32 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizerTest do
 
     test "splits amount between multiple positions in a transaction" do
       transactions = [
-        build(:sale_transaction, amount: 10.0, quantity: 1, description: "3 x Apple juice, 2 x Orange Juice"),
+        build(:sale_transaction,
+          amount: 10.0,
+          quantity: 1,
+          description: "3 x Apple juice, 2 x Orange Juice"
+        )
       ]
 
       assert [
-        %SaleTransaction{amount: 2.0, quantity: 3, description: "Apple juice"},
-        %SaleTransaction{amount: 8.0, quantity: 2, description: "Orange Juice"},
-      ] = DescriptionNormalizer.run(transactions)
+               %SaleTransaction{amount: 2.0, quantity: 3, description: "Apple juice"},
+               %SaleTransaction{amount: 8.0, quantity: 2, description: "Orange Juice"}
+             ] = DescriptionNormalizer.run(transactions)
     end
 
     test "rounds to 2 numbers after , for ugly number" do
       transactions = [
-        build(:sale_transaction, amount: 10.0, quantity: 1, description: "5 x Apple juice, 2 x Orange Juice"),
+        build(:sale_transaction,
+          amount: 10.0,
+          quantity: 1,
+          description: "5 x Apple juice, 2 x Orange Juice"
+        )
       ]
 
       assert [
-        %SaleTransaction{amount: 1.43, quantity: 5, description: "Apple juice"},
-        %SaleTransaction{amount: 8.57, quantity: 2, description: "Orange Juice"},
-      ] = DescriptionNormalizer.run(transactions)
+               %SaleTransaction{amount: 1.43, quantity: 5, description: "Apple juice"},
+               %SaleTransaction{amount: 8.57, quantity: 2, description: "Orange Juice"}
+             ] = DescriptionNormalizer.run(transactions)
     end
 
     test "trims transaction description" do

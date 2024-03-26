@@ -375,11 +375,11 @@
     "payout_type": "BANK_ACCOUNT",
     "payouts_received": 0,
     "payouts_total": 0,
-    "product_summary": "1 x Tomato juice, 5 x Orange peeps",
+    "product_summary": "1 x Tomato juice DJ, 5 x Orange peeps Crew",
     "products": [
       {
-        "description": "DJs",
-        "name": "1 x Tomato juice, 5 x Orange peeps",
+        "description": "",
+        "name": "1 x Tomato juice DJ, 5 x Orange peeps Crew",
         "price": 3,
         "quantity": 1,
         "total_price": 3

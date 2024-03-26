@@ -21,9 +21,9 @@ defmodule SumupIntegration.Sales do
 
   @default_pipeline [
     &EventDetector.run/1,
+    &DescriptionNormalizer.run/1,
     &SuperficialSaleRemoval.run/1,
-    &SaleTypeDetector.run/1,
-    &DescriptionNormalizer.run/1
+    &SaleTypeDetector.run/1
   ]
 
   def new() do

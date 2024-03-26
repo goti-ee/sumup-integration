@@ -140,7 +140,7 @@ defmodule SumupIntegration.Sales.SalesTest do
                  description: "Tomato juice",
                  payment_method: :cash,
                  quantity: 1,
-                 price_category_name: "DJs",
+                 price_category_name: "DJ",
                  event_name: nil,
                  sale_type: :free
                },
@@ -154,9 +154,9 @@ defmodule SumupIntegration.Sales.SalesTest do
                  description: "Orange peeps",
                  payment_method: :cash,
                  quantity: 5,
-                 price_category_name: "DJs",
+                 price_category_name: "Crew",
                  event_name: nil,
-                 sale_type: :free
+                 sale_type: :crew
                }
              ] = transactions
     end
@@ -296,10 +296,10 @@ defmodule SumupIntegration.Sales.SalesTest do
                  created_at: ~U[2022-03-16 23:03:33Z],
                  currency: "EUR",
                  amount: 3.0,
-                 description: "1 x Tomato juice, 5 x Orange peeps",
+                 description: "1 x Tomato juice DJ, 5 x Orange peeps Crew",
                  payment_method: :cash,
                  quantity: 1,
-                 price_category_name: "DJs",
+                 price_category_name: "",
                  event_name: nil,
                  sale_type: nil
                }

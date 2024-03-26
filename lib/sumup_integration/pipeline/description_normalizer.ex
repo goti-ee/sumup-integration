@@ -32,17 +32,18 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizer do
         amount_per_position = Float.round(amount / total_count, 2)
         last_position_idx = length(positions) - 1
 
-        {transactions, ^amount} = positions
+        {transactions, _amount} =
+          positions
           |> Enum.with_index()
           |> Enum.reduce({[], 0}, fn {position, idx}, {agg, running_amount} ->
             position_amount =
-              if idx == last_position_idx, do: amount - running_amount, else: amount_per_position
+              if idx == last_position_idx, do: Float.round(amount - running_amount, 2), else: amount_per_position
 
             next_transaction = %SaleTransaction{
               transaction
               | quantity: position.quantity,
                 description: position.position_name,
-                amount: position_amount,
+                amount: position_amount
             }
 
             {[next_transaction | agg], running_amount + position_amount}

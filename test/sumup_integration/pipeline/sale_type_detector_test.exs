@@ -38,6 +38,79 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetectorTest do
       assert [%SaleTransaction{sale_type: :crew}] = SaleTypeDetector.run([transaction])
     end
 
+    test "marks sales that contain 'Crew' in the position description as :crew" do
+      transaction =
+        build(:sale_transaction,
+          price_category_name: "",
+          description: "Orange Juice Crew",
+          sale_type: nil
+        )
+
+      assert [
+               %SaleTransaction{
+                 sale_type: :crew,
+                 description: "Orange Juice",
+                 price_category_name: "Crew"
+               }
+             ] =
+               SaleTypeDetector.run([transaction])
+    end
+
+    test "marks sales that contain 'DJs' in the position description as :free" do
+      transaction =
+        build(:sale_transaction,
+          price_category_name: "",
+          description: "Orange Juice DJs",
+          sale_type: nil
+        )
+
+      assert [
+               %SaleTransaction{
+                 sale_type: :free,
+                 description: "Orange Juice",
+                 price_category_name: "DJs"
+               }
+             ] =
+               SaleTypeDetector.run([transaction])
+    end
+
+    test "does not use special sale_type when actual position name includes matching type substring" do
+      transactions = [
+        build(:sale_transaction,
+          price_category_name: "",
+          description: "OraCrewnge Juice ",
+          sale_type: nil
+        ),
+        build(:sale_transaction,
+          price_category_name: "",
+          description: "OrangDJse Juice ",
+          sale_type: nil
+        )
+      ]
+
+      assert [
+               %SaleTransaction{sale_type: :public, description: "OraCrewnge Juice "},
+               %SaleTransaction{sale_type: :public, description: "OrangDJse Juice "}
+             ] =
+               SaleTypeDetector.run(transactions)
+    end
+
+    test "does not modify sale_type if there are multiple matching options in description" do
+      transaction =
+        build(:sale_transaction,
+          price_category_name: "",
+          description: "1 x Orange Juice DJs, 3 x Apple Juice Crew",
+          sale_type: nil
+        )
+
+      assert [
+               %SaleTransaction{
+                 sale_type: :public,
+                 description: "1 x Orange Juice DJs, 3 x Apple Juice Crew"
+               }
+             ] = SaleTypeDetector.run([transaction])
+    end
+
     test "marks any other item as :public" do
       transactions = [
         build(:sale_transaction, price_category_name: "Public", sale_type: nil),
