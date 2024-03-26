@@ -188,7 +188,7 @@
       "timestamp": "2022-03-16T23:03:33.594Z",
       "status": "SUCCESSFUL",
       "refunded_amount": 0,
-      "product_summary": "Tomato juice",
+      "product_summary": "1 x Tomato juice, 5 x Orange peeps",
       "payouts_total": 1,
       "payouts_received": 1,
       "payout_type": "BANK_ACCOUNT",
@@ -209,7 +209,7 @@
       "entry_mode": "contactless",
       "currency": "EUR",
       "card_type": "MASTERCARD",
-      "amount": 0.01
+      "amount": 3
     }
   ]
 }
