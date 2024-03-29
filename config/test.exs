@@ -1,5 +1,7 @@
 import Config
 
+config :sumup_integration, Oban, testing: :inline
+
 config :logger, level: :warning
 
 config :sumup_integration,

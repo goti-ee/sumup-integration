@@ -1,48 +1,39 @@
 defmodule SumupIntegration.Worker do
-  use Task
+  use Oban.Worker,
+    max_attempts: 1,
+    unique: [period: :infinity, states: ~w(available executing)a]
 
   alias SumupIntegration.Sales
-  alias SumupIntegration.Pipeline.{EventDetector, SuperficialSaleRemoval, SaleTypeDetector}
+
+  alias SumupIntegration.Pipeline.{
+    EventDetector,
+    SuperficialSaleRemoval,
+    SaleTypeDetector,
+    DescriptionNormalizer
+  }
 
   require Logger
 
-  def start_link(arg) do
-    Task.start_link(__MODULE__, :run, [arg])
+  @impl Oban.Worker
+  def perform(%Oban.Job{} = _job) do
+    do_perform(enabled?())
   end
 
-  def child_spec(arg) do
-    %{
-      id: __MODULE__,
-      start: {__MODULE__, :start_link, [arg]},
-      restart: :transient,
-      significant: significant?()
-    }
-  end
+  defp do_perform(_enabled? = false), do: :ok
 
-  def run(_arg) do
-    do_run(enabled?())
-  end
-
-  defp do_run(_enabled? = false), do: :ok
-
-  defp do_run(_enabled? = true) do
+  defp do_perform(_enabled? = true) do
     Sales.new()
     |> Sales.get_last_offset!()
     |> Sales.fetch!()
     |> Sales.run_pipeline!([
       &EventDetector.run/1,
+      &DescriptionNormalizer.run/1,
       &SuperficialSaleRemoval.run/1,
       &SaleTypeDetector.run/1
     ])
     |> Sales.insert!()
-  end
 
-  defp significant?() do
-    if Application.fetch_env!(:sumup_integration, :enabled_auto_exit?) do
-      true
-    else
-      false
-    end
+    :ok
   end
 
   defp enabled?() do

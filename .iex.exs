@@ -23,3 +23,9 @@ insert_events = fn (events) ->
   end)
   |> then(&(SumupIntegration.Repo.insert_all(SumupIntegration.Event, &1)))
 end
+
+trigger_tick = fn () ->
+  %{}
+  |> SumupIntegration.Worker.new()
+  |> Oban.insert()
+end

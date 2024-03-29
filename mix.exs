@@ -28,6 +28,7 @@ defmodule SumupIntegration.MixProject do
       {:ecto_sql, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.4"},
+      {:oban, "~> 2.17"},
       {:testcontainers, "~> 1.7"},
       {:plug, "~> 1.0", only: :test},
       {:faker, "~> 0.18", only: :test}
