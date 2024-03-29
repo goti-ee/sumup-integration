@@ -1,0 +1,8 @@
+{
+  "name": "sumup_integration",
+  "scripts": {
+    "dokku": {
+      "predeploy": "/app/bin/migrate"
+    }
+  }
+}
