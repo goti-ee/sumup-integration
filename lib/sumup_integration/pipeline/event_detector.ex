@@ -1,5 +1,6 @@
 defmodule SumupIntegration.Pipeline.EventDetector do
   alias SumupIntegration.Sales.SaleTransaction
+  alias SumupIntegration.Event
 
   @type event :: %{name: String.t(), start_at: DateTime.t(), end_at: DateTime.t()}
 
@@ -38,14 +39,8 @@ defmodule SumupIntegration.Pipeline.EventDetector do
     end
   end
 
-  @spec get_events() :: [event()]
+  @spec get_events() :: [Event.t()]
   def get_events() do
-    [
-      %{
-        name: "Girls Rule the World vol.3 (08.03.24)",
-        start_at: DateTime.new!(~D[2024-03-08], ~T[20:00:00], "Etc/UTC"),
-        end_at: DateTime.new!(~D[2024-03-09], ~T[09:00:00], "Etc/UTC")
-      }
-    ]
+    Event.get_all()
   end
 end

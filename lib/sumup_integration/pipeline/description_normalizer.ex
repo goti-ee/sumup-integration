@@ -37,7 +37,9 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizer do
           |> Enum.with_index()
           |> Enum.reduce({[], 0}, fn {position, idx}, {agg, running_amount} ->
             position_amount =
-              if idx == last_position_idx, do: Float.round(amount - running_amount, 2), else: amount_per_position
+              if idx == last_position_idx,
+                do: Float.round(amount - running_amount, 2),
+                else: amount_per_position
 
             next_transaction = %SaleTransaction{
               transaction
