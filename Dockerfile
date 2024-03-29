@@ -80,7 +80,7 @@ ENV MIX_ENV="prod"
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/sumup_integration ./
-
+COPY --chown=nobody:root app.json /app/
 USER nobody
 
 CMD ["/app/bin/server"]
