@@ -29,3 +29,8 @@ trigger_tick = fn () ->
   |> SumupIntegration.Worker.new()
   |> Oban.insert()
 end
+
+remove_all = fn () ->
+  SumupIntegration.Sales.SaleTransaction
+  |> SumupIntegration.Repo.delete_all()
+end
