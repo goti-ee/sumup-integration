@@ -11,7 +11,8 @@ config :sumup_integration, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       {"*/10 * * * *", SumupIntegration.Worker}, # Run every 10 minutes
+       # Run every 10 minutes
+       {"*/10 * * * *", SumupIntegration.Worker}
      ]}
   ]
 
