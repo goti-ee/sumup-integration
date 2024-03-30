@@ -9,7 +9,8 @@ defmodule SumupIntegration.Worker do
     EventDetector,
     SuperficialSaleRemoval,
     SaleTypeDetector,
-    DescriptionNormalizer
+    DescriptionNormalizer,
+    SumupFeeReducer
   }
 
   require Logger
@@ -29,7 +30,8 @@ defmodule SumupIntegration.Worker do
       &EventDetector.run/1,
       &DescriptionNormalizer.run/1,
       &SuperficialSaleRemoval.run/1,
-      &SaleTypeDetector.run/1
+      &SaleTypeDetector.run/1,
+      &SumupFeeReducer.run/1
     ])
     |> Sales.insert!()
 

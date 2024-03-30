@@ -114,6 +114,7 @@ defmodule SumupIntegration.Sales.ApiTransaction do
       created_at: created_at,
       currency: Map.fetch!(opts, "currency"),
       amount: Map.fetch!(opts, "total_price"),
+      amount_gross: Map.fetch!(opts, "total_price"),
       description: Map.get(opts, "name", "") |> String.trim(),
       payment_method: Map.fetch!(opts, "payment_type") |> parse_payment_method(),
       quantity: Map.get(opts, "quantity", 0),

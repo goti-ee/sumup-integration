@@ -8,7 +8,8 @@ defmodule SumupIntegration.Sales do
     EventDetector,
     SuperficialSaleRemoval,
     SaleTypeDetector,
-    DescriptionNormalizer
+    DescriptionNormalizer,
+    SumupFeeReducer
   }
 
   @type pipeline_callback :: ([SaleTransaction] -> [SaleTransaction])
@@ -23,7 +24,8 @@ defmodule SumupIntegration.Sales do
     &EventDetector.run/1,
     &DescriptionNormalizer.run/1,
     &SuperficialSaleRemoval.run/1,
-    &SaleTypeDetector.run/1
+    &SaleTypeDetector.run/1,
+    &SumupFeeReducer.run/1
   ]
 
   def new() do

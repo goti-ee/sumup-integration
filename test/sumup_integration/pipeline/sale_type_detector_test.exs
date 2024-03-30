@@ -9,7 +9,12 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetectorTest do
   describe "run/1" do
     test "marks item with cost 0 as free in regards to category name" do
       transaction =
-        build(:sale_transaction, amount: 0, price_category_name: "Crew", sale_type: nil)
+        build(:sale_transaction,
+          amount: 0,
+          amount_gross: 0,
+          price_category_name: "Crew",
+          sale_type: nil
+        )
 
       assert [%SaleTransaction{sale_type: :free}] = SaleTypeDetector.run([transaction])
     end

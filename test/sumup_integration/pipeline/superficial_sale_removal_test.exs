@@ -9,14 +9,22 @@ defmodule SumupIntegration.Pipeline.SuperficialSaleRemovalTest do
   describe "run/1" do
     test "overwrites amount when it's superificial" do
       transactionA = build(:sale_transaction)
-      transactionB = build(:sale_transaction, amount: 0.03, quantity: 3)
-      transcationC = build(:sale_transaction, amount: 0.01, quantity: 1)
+      transactionB = build(:sale_transaction, amount: 0.03, amount_gross: 0.03, quantity: 3)
+      transcationC = build(:sale_transaction, amount: 0.01, amount_gross: 0.01, quantity: 1)
 
       assert [
                ^transactionA,
-               %SaleTransaction{amount: +0.0, quantity: 3},
-               %SaleTransaction{amount: +0.0, quantity: 1}
+               %SaleTransaction{amount: +0.0, amount_gross: +0.0, quantity: 3},
+               %SaleTransaction{amount: +0.0, amount_gross: +0.0, quantity: 1}
              ] = SuperficialSaleRemoval.run([transactionA, transactionB, transcationC])
+    end
+
+    test "ignores amount_gross in favor of amount" do
+      transactionA = build(:sale_transaction, amount: 0.03, amount_gross: 5, quantity: 3)
+
+      assert [
+               %SaleTransaction{amount: +0.0, amount_gross: +0.0, quantity: 3}
+             ] = SuperficialSaleRemoval.run([transactionA])
     end
 
     test "leaves unmatched transactions as-is and preserves order" do

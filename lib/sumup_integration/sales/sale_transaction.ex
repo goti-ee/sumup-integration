@@ -17,6 +17,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
           created_at: DateTime.t(),
           currency: String.t(),
           amount: float(),
+          amount_gross: float(),
           description: String.t(),
           payment_method: payment_method(),
           quantity: pos_integer(),
@@ -32,6 +33,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
     field(:created_at, :utc_datetime)
     field(:currency, :string)
     field(:amount, :float)
+    field(:amount_gross, :float)
     field(:description, :string, default: "")
     field(:payment_method, Ecto.Enum, values: [:card, :cash, :unknown])
     field(:quantity, :integer)
@@ -66,6 +68,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
         :created_at,
         :currency,
         :amount,
+        :amount_gross,
         :description,
         :payment_method,
         :quantity,
@@ -81,6 +84,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
       :created_at,
       :currency,
       :amount,
+      :amount_gross,
       :payment_method,
       :quantity
     ])

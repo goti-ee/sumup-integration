@@ -45,7 +45,8 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizer do
               transaction
               | quantity: position.quantity,
                 description: position.position_name,
-                amount: position_amount
+                amount: position_amount,
+                amount_gross: position_amount
             }
 
             {[next_transaction | agg], running_amount + position_amount}

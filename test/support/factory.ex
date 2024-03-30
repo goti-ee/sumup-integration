@@ -2,6 +2,8 @@ defmodule SumupIntegration.Factory do
   alias SumupIntegration.Repo
 
   def build(:sale_transaction) do
+    amount = Faker.Commerce.price()
+
     %SumupIntegration.Sales.SaleTransaction{
       transaction_id: Faker.UUID.v4(),
       status: Faker.Util.pick([:successful, :failed, :refunded, :pending, :unknown]),
@@ -9,7 +11,8 @@ defmodule SumupIntegration.Factory do
       # give a date from last year
       created_at: Faker.DateTime.backward(365),
       currency: Faker.Currency.code(),
-      amount: Faker.Commerce.price(),
+      amount: amount,
+      amount_gross: amount,
       description: Faker.Util.pick(["", Faker.Beer.name()]),
       price_category_name:
         Faker.Util.pick(["Public", "Standard", "Extra", "DJs", "DJ", "Crew", ""]),
