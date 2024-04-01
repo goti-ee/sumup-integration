@@ -178,23 +178,38 @@ defmodule SumupIntegration.Sales.SalesTest do
     end
   end
 
-  describe "get_last_offset/1" do
+  describe "get_offset/2" do
     setup do
       sales = Sales.new()
 
       transactions = [
         insert!(:sale_transaction, created_at: ~U[2022-03-12 03:05:56Z]),
-        insert!(:sale_transaction, created_at: ~U[2022-03-13 23:11:56Z]),
-        insert!(:sale_transaction, created_at: ~U[2022-03-15 16:12:56Z])
+        insert!(:sale_transaction, created_at: ~U[2022-04-13 23:11:56Z]),
+        insert!(:sale_transaction, created_at: ~U[2022-05-15 16:12:56Z])
       ]
 
       %{transactions: transactions, sales: sales}
     end
 
-    test "stores last fetched transaction id", %{transactions: transactions, sales: sales} do
+    test "stores last fetched transaction id when relative_timestamp=:last", %{
+      transactions: transactions,
+      sales: sales
+    } do
       %SaleTransaction{transaction_id: expected_transaction_id} = List.last(transactions)
 
-      assert %Sales{last_fetched_id: ^expected_transaction_id} = Sales.get_last_offset!(sales)
+      assert %Sales{last_fetched_id: ^expected_transaction_id} = Sales.get_offset!(sales, :last)
+    end
+
+    test "stores nil as transaction id when relative_timestamp=:first", %{sales: sales} do
+      assert %Sales{last_fetched_id: nil} = Sales.get_offset!(sales, :first)
+    end
+
+    test "stores transaction id that happened at least month ago when relative_timestamp=:month_ago",
+         %{transactions: transactions, sales: sales} do
+      %SaleTransaction{transaction_id: expected_transaction_id} = List.last(transactions)
+
+      assert %Sales{last_fetched_id: ^expected_transaction_id} =
+               Sales.get_offset!(sales, :month_ago)
     end
   end
 

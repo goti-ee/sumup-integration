@@ -14,7 +14,9 @@ config :sumup_integration, Oban,
     {Oban.Plugins.Cron,
      crontab: [
        # Run every 10 minutes
-       {"*/10 * * * *", SumupIntegration.Worker}
+       {"*/10 * * * *", SumupIntegration.Worker, args: %{"type" => "incremental"}},
+       {"@daily", SumupIntegration.Worker, args: %{"type" => "last-month"}},
+       {"@weekly", SumupIntegration.Worker, args: %{"type" => "full"}}
      ]}
   ]
 

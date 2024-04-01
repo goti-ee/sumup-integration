@@ -16,16 +16,20 @@ defmodule SumupIntegration.Worker do
 
   require Logger
 
+  @default_sync_type "incremental"
+
   @impl Oban.Worker
-  def perform(%Oban.Job{} = _job) do
-    do_perform(enabled?())
+  def perform(%Oban.Job{args: args} = _job) do
+    sync_type = Map.get(args, "type", @default_sync_type)
+
+    do_perform(sync_type, enabled?())
   end
 
-  defp do_perform(_enabled? = false), do: :ok
+  defp do_perform(_sync_type, _enabled? = false), do: :ok
 
-  defp do_perform(_enabled? = true) do
+  defp do_perform(sync_type, _enabled? = true) do
     Sales.new()
-    |> Sales.get_last_offset!()
+    |> Sales.get_offset!(parse_sync_type(sync_type))
     |> Sales.fetch!()
     |> Sales.run_pipeline!([
       &EventDetector.run/1,
@@ -38,6 +42,15 @@ defmodule SumupIntegration.Worker do
     |> Sales.insert!()
 
     :ok
+  end
+
+  defp parse_sync_type(sync_type) do
+    case sync_type do
+      "incremental" -> :last
+      "last-month" -> :month_ago
+      "full" -> :first
+      _ -> :last
+    end
   end
 
   defp enabled?() do

@@ -34,8 +34,23 @@ defmodule SumupIntegration.Sales do
     %__MODULE__{}
   end
 
-  def get_last_offset!(%__MODULE__{} = sales) do
-    transaction_id = SaleTransaction.get_last_transaction_id!()
+  @spec get_offset!(t(), relative_timestamp :: :last | :first | :month_ago) :: t()
+  def get_offset!(%__MODULE__{} = sales, relative_timestamp) do
+    transaction_id =
+      case relative_timestamp do
+        :last ->
+          SaleTransaction.get_last_transaction_id!()
+
+        :first ->
+          nil
+
+        :month_ago ->
+          DateTime.utc_now()
+          |> DateTime.add(-30, :day)
+          |> SaleTransaction.get_transaction_id_by_date()
+      end
+
+    Logger.info("Storing remote offset as starting point", transaction_id: transaction_id)
 
     %__MODULE__{sales | last_fetched_id: transaction_id}
   end

@@ -31,6 +31,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
     field(:status, Ecto.Enum, values: [:successful, :failed, :refunded, :pending, :unknown])
     field(:sold_by, :string)
     field(:created_at, :utc_datetime)
+
     # Metabase has very limited functionality regarding timezone conversion. As a result, we need to store
     # time in the same timezone that we want to display it in.
     field(:created_at_local, :naive_datetime)
@@ -49,6 +50,22 @@ defmodule SumupIntegration.Sales.SaleTransaction do
   def get_last_transaction_id!() do
     query =
       from(sale in __MODULE__,
+        order_by: [desc: sale.created_at],
+        limit: 1,
+        select: [sale.transaction_id]
+      )
+
+    case Repo.one(query) do
+      [transcation_id] -> transcation_id
+      nil -> nil
+    end
+  end
+
+  @spec get_transaction_id_by_date(DateTime.t()) :: String.t() | nil
+  def get_transaction_id_by_date(date) do
+    query =
+      from(sale in __MODULE__,
+        where: sale.created_at <= ^date,
         order_by: [desc: sale.created_at],
         limit: 1,
         select: [sale.transaction_id]

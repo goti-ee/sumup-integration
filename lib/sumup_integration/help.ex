@@ -14,9 +14,9 @@ defmodule SumupIntegration.Help do
     end
   end
 
-  def run_sales do
+  def run_sales(offset_type \\ :last) do
     Sales.new()
-    |> Sales.get_last_offset!()
+    |> Sales.get_offset!(offset_type)
     |> Sales.fetch!()
     |> Sales.run_pipeline!()
     |> Sales.insert!()
@@ -37,8 +37,8 @@ defmodule SumupIntegration.Help do
     |> then(&SumupIntegration.Repo.insert_all(SumupIntegration.Event, &1))
   end
 
-  def trigger_tick do
-    %{}
+  def trigger_tick(sync_type \\ "incremental") do
+    %{"type" => sync_type}
     |> SumupIntegration.Worker.new()
     |> Oban.insert()
   end
