@@ -21,3 +21,20 @@ description based detection logic.
 4. `DescriptionNormalizer` - SumUp has a bug in their API that forces sales with multiple positions in it not to be
 returned as separate products via API. Instead, the API returns them as a blob string "2 x Apple Juice, 5 x Candy".
 This makes aggregations harder than they need to be. This module makes sure such transcations are normalized and split.
+
+## Product REPL
+
+To enter deployment's container, one needs to execute:
+```shell
+dokku enter sumup-integration web
+```
+
+To spin up REPL:
+```shell
+./bin/sumup_integration remote
+```
+
+Finally, to introduce all REPL helpers, write:
+```shell
+use SumupIntegration.Help
+```

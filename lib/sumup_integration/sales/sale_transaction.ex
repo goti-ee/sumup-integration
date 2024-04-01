@@ -31,6 +31,9 @@ defmodule SumupIntegration.Sales.SaleTransaction do
     field(:status, Ecto.Enum, values: [:successful, :failed, :refunded, :pending, :unknown])
     field(:sold_by, :string)
     field(:created_at, :utc_datetime)
+    # Metabase has very limited functionality regarding timezone conversion. As a result, we need to store
+    # time in the same timezone that we want to display it in.
+    field(:created_at_local, :naive_datetime)
     field(:currency, :string)
     field(:amount, :float)
     field(:amount_gross, :float)
@@ -74,7 +77,8 @@ defmodule SumupIntegration.Sales.SaleTransaction do
         :quantity,
         :event_name,
         :sale_type,
-        :price_category_name
+        :price_category_name,
+        :created_at_local
       ]
     )
     |> validate_required([

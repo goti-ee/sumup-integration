@@ -30,6 +30,7 @@ defmodule SumupIntegration.MixProject do
       {:jason, "~> 1.4"},
       {:oban, "~> 2.17"},
       {:testcontainers, "~> 1.7"},
+      {:tzdata, "~> 1.1"},
       {:plug, "~> 1.0", only: :test},
       {:faker, "~> 0.18", only: :test}
     ]
