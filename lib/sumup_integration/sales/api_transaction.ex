@@ -74,6 +74,8 @@ defmodule SumupIntegration.Sales.ApiTransaction do
   defp filter_by_status(%{"status" => "REFUNDED"}), do: false
   # Failed are not useful
   defp filter_by_status(%{"status" => "FAILED"}), do: false
+  # Pending ones will be replaces by succesful ones later on
+  defp filter_by_status(%{"status" => "PENDING"}), do: false
   defp filter_by_status(_), do: true
 
   defp enrich_with_details(sale) do
