@@ -5,6 +5,7 @@ defmodule SumupIntegration.Sales.ApiTransaction do
           timestamp: String.t(),
           currency: String.t(),
           total_price: float(),
+          tip_amount: float(),
           # position name
           name: String.t(),
           # price group name
@@ -76,15 +77,21 @@ defmodule SumupIntegration.Sales.ApiTransaction do
   defp filter_by_status(_), do: true
 
   defp enrich_with_details(sale) do
-    %{"products" => products} = get_sumup_transaction(Map.fetch!(sale, "id"))
+    %{"products" => products, "tip_amount" => tip_amount} =
+      get_sumup_transaction(Map.fetch!(sale, "id"))
 
     products
-    |> Enum.map(fn product ->
+    |> Enum.with_index()
+    |> Enum.map(fn {product, idx} ->
+      product_tip_amount = if idx == 0, do: tip_amount, else: 0.0
+
       Map.merge(sale, %{
         "name" => Map.get(product, "name", ""),
         "total_price" => Map.fetch!(product, "total_price"),
         "quantity" => Map.get(product, "quantity", 0),
-        "description" => Map.get(product, "description", "")
+        "description" => Map.get(product, "description", ""),
+        # Assign tip only to the first transcation of the group
+        "tip_amount" => product_tip_amount
       })
     end)
   end
@@ -113,8 +120,9 @@ defmodule SumupIntegration.Sales.ApiTransaction do
       sold_by: Map.fetch!(opts, "user"),
       created_at: created_at,
       currency: Map.fetch!(opts, "currency"),
-      amount: Map.fetch!(opts, "total_price"),
+      amount: Map.fetch!(opts, "total_price") + Map.fetch!(opts, "tip_amount"),
       amount_gross: Map.fetch!(opts, "total_price"),
+      tip_amount: Map.fetch!(opts, "tip_amount"),
       description: Map.get(opts, "name", "") |> String.trim(),
       payment_method: Map.fetch!(opts, "payment_type") |> parse_payment_method(),
       quantity: Map.get(opts, "quantity", 0),

@@ -38,6 +38,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
     field(:currency, :string)
     field(:amount, :float)
     field(:amount_gross, :float)
+    field(:tip_amount, :float)
     field(:description, :string, default: "")
     field(:payment_method, Ecto.Enum, values: [:card, :cash, :unknown])
     field(:quantity, :integer)
@@ -89,6 +90,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
         :currency,
         :amount,
         :amount_gross,
+        :tip_amount,
         :description,
         :payment_method,
         :quantity,

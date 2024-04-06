@@ -23,7 +23,8 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizer do
        do: [transaction]
 
   defp do_normalize(
-         %SaleTransaction{description: description, amount: amount} = transaction,
+         %SaleTransaction{description: description, amount_gross: amount, tip_amount: tip_amount} =
+           transaction,
          _normalize? = true
        ) do
     case get_groups(description) do
@@ -41,12 +42,15 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizer do
                 do: Float.round(amount - running_amount, 2),
                 else: amount_per_position
 
+            position_tip_amount = if idx == 0, do: tip_amount, else: 0.0
+
             next_transaction = %SaleTransaction{
               transaction
               | quantity: position.quantity,
                 description: position.position_name,
-                amount: position_amount,
-                amount_gross: position_amount
+                amount: position_amount + position_tip_amount,
+                amount_gross: position_amount,
+                tip_amount: position_tip_amount
             }
 
             {[next_transaction | agg], running_amount + position_amount}

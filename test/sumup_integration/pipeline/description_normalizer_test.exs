@@ -28,8 +28,9 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizerTest do
     test "splits amount between multiple positions in a transaction" do
       transactions = [
         build(:sale_transaction,
-          amount: 10.0,
+          amount: 11.0,
           amount_gross: 10.0,
+          tip_amount: 1.0,
           quantity: 1,
           description: "3 x Apple juice, 2 x Orange Juice"
         )
@@ -37,14 +38,16 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizerTest do
 
       assert [
                %SaleTransaction{
-                 amount: 2.0,
+                 amount: 3.0,
                  amount_gross: 2.0,
+                 tip_amount: 1.0,
                  quantity: 3,
                  description: "Apple juice"
                },
                %SaleTransaction{
                  amount: 8.0,
                  amount_gross: 8.0,
+                 tip_amount: +0.0,
                  quantity: 2,
                  description: "Orange Juice"
                }
@@ -56,6 +59,7 @@ defmodule SumupIntegration.Pipeline.DescriptionNormalizerTest do
         build(:sale_transaction,
           amount: 10.0,
           amount_gross: 10.0,
+          tip_amount: 0.0,
           quantity: 1,
           description: "5 x Apple juice, 2 x Orange Juice"
         )

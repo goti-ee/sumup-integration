@@ -22,12 +22,6 @@ defmodule SumupIntegration.Worker do
   def perform(%Oban.Job{args: args} = _job) do
     sync_type = Map.get(args, "type", @default_sync_type)
 
-    do_perform(sync_type, enabled?())
-  end
-
-  defp do_perform(_sync_type, _enabled? = false), do: :ok
-
-  defp do_perform(sync_type, _enabled? = true) do
     Sales.new()
     |> Sales.get_offset!(parse_sync_type(sync_type))
     |> Sales.fetch!()
@@ -51,11 +45,5 @@ defmodule SumupIntegration.Worker do
       "full" -> :first
       _ -> :last
     end
-  end
-
-  defp enabled?() do
-    opts = Application.fetch_env!(:sumup_integration, __MODULE__)
-
-    Keyword.get(opts, :auto_fetch?, false)
   end
 end

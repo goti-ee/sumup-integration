@@ -13,6 +13,7 @@ defmodule SumupIntegration.Factory do
       currency: Faker.Currency.code(),
       amount: amount,
       amount_gross: amount,
+      tip_amount: Faker.Util.pick([0.0, 1.0, 2.0, 3.0, 4.5]),
       description: Faker.Util.pick(["", Faker.Beer.name()]),
       price_category_name:
         Faker.Util.pick(["Public", "Standard", "Extra", "DJs", "DJ", "Crew", ""]),

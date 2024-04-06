@@ -9,16 +9,12 @@ defmodule SumupIntegration.Pipeline.SumupFeeReducer do
     |> Enum.map(&apply_fee/1)
   end
 
-  defp apply_fee(%SaleTransaction{amount: amount, amount_gross: amount_gross} = transaction)
-       when amount != amount_gross,
-       do: transaction
-
   defp apply_fee(%SaleTransaction{payment_method: :card} = transaction) do
     amount_gross = transaction.amount_gross
 
     # 0.9831
     remaining_amount_as_decimal = (100 - @sumup_fee_in_percentages) / 100
-    amount = Float.round(amount_gross * remaining_amount_as_decimal, 2)
+    amount = Float.round(amount_gross * remaining_amount_as_decimal, 2) + transaction.tip_amount
 
     %SaleTransaction{transaction | amount: amount}
   end
