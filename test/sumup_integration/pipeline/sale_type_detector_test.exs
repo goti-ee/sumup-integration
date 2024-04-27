@@ -79,6 +79,24 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetectorTest do
                SaleTypeDetector.run([transaction])
     end
 
+    test "marks sales that contain 'Standard' in the position description as :public" do
+      transaction =
+        build(:sale_transaction,
+          price_category_name: "",
+          description: "Orange Juice Standard",
+          sale_type: nil
+        )
+
+      assert [
+               %SaleTransaction{
+                 sale_type: :public,
+                 description: "Orange Juice",
+                 price_category_name: "Standard"
+               }
+             ] =
+               SaleTypeDetector.run([transaction])
+    end
+
     test "does not use special sale_type when actual position name includes matching type substring" do
       transactions = [
         build(:sale_transaction,

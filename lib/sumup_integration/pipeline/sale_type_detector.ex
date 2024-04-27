@@ -1,7 +1,7 @@
 defmodule SumupIntegration.Pipeline.SaleTypeDetector do
   alias SumupIntegration.Sales.SaleTransaction
 
-  @description_sale_type_regex ~r/\s+(?<sale_type>crew|dj|djs)(?:\s+|$|,)/i
+  @description_sale_type_regex ~r/\s+(?<sale_type>crew|dj|djs|standard)(?:\s+|$|,)/i
 
   def run(transactions) do
     transactions
@@ -37,6 +37,7 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetector do
             "crew" -> :crew
             "djs" -> :free
             "dj" -> :free
+            "standard" -> :public
           end
 
         description = Regex.replace(@description_sale_type_regex, description, "")
