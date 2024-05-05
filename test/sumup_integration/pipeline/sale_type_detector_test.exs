@@ -37,6 +37,12 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetectorTest do
       assert [%SaleTransaction{sale_type: :crew}] = SaleTypeDetector.run([transaction])
     end
 
+    test "marks guest list sales as :free" do
+      transaction = build(:sale_transaction, price_category_name: "Guest list", sale_type: nil)
+
+      assert [%SaleTransaction{sale_type: :free}] = SaleTypeDetector.run([transaction])
+    end
+
     test "marks crew sales as :crew ignoring casing" do
       transaction = build(:sale_transaction, price_category_name: "CREWss", sale_type: nil)
 
@@ -92,6 +98,24 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetectorTest do
                  sale_type: :public,
                  description: "Orange Juice",
                  price_category_name: "Standard"
+               }
+             ] =
+               SaleTypeDetector.run([transaction])
+    end
+
+    test "marks sales that contain 'Guest List' in the position description as :free" do
+      transaction =
+        build(:sale_transaction,
+          price_category_name: "",
+          description: "Orange Ticket Guest List",
+          sale_type: nil
+        )
+
+      assert [
+               %SaleTransaction{
+                 sale_type: :free,
+                 description: "Orange Ticket",
+                 price_category_name: "Guest List"
                }
              ] =
                SaleTypeDetector.run([transaction])
