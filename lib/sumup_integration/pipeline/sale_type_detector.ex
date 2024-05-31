@@ -1,7 +1,7 @@
 defmodule SumupIntegration.Pipeline.SaleTypeDetector do
   alias SumupIntegration.Sales.SaleTransaction
 
-  @description_sale_type_regex ~r/\s+(?<sale_type>crew|dj|djs|standard|guest list)(?:\s+|$|,)/i
+  @description_sale_type_regex ~r/\s+(?<sale_type>crew|dj|djs|standard|guest list|member)(?:\s+|$|,)/i
 
   def run(transactions) do
     transactions
@@ -31,6 +31,9 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetector do
       String.contains?(price_category_name, "guest list") ->
         %SaleTransaction{transaction | sale_type: :free}
 
+      String.contains?(price_category_name, "member") ->
+        %SaleTransaction{transaction | sale_type: :member}
+
       can_parse_description?(description) ->
         %{"sale_type" => regex_sale_type} =
           Regex.named_captures(@description_sale_type_regex, description)
@@ -41,6 +44,7 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetector do
             "djs" -> :free
             "dj" -> :free
             "guest list" -> :free
+            "member" -> :member
             "standard" -> :public
           end
 

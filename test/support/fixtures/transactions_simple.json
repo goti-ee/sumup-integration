@@ -210,6 +210,37 @@
       "currency": "EUR",
       "card_type": "MASTERCARD",
       "amount": 3
+    },
+    {
+      "user": "jane.doe@goti.test.ee",
+      "type": "PAYMENT",
+      "transaction_id": "50787557-71ec-4394-935c-690296c7624e",
+      "transaction_code": "TOITZ30FF7C",
+      "timestamp": "2023-01-15T23:01:33.594Z",
+      "status": "SUCCESSFUL",
+      "refunded_amount": 0,
+      "product_summary": "Orange lemonade",
+      "payouts_total": 1,
+      "payouts_received": 1,
+      "payout_type": "BANK_ACCOUNT",
+      "payout_plan": "SINGLE_PAYMENT",
+      "payout_date": "2023-01-15",
+      "payment_type": "CASH",
+      "internal_tx_result": "11",
+      "internal_status": "CAPTURED",
+      "internal_payment_type": 10,
+      "internal_id": 6066135172,
+      "internal_entry_mode_id": 35,
+      "internal_client_transaction_id": "urn:sumup:pos:sale:ABC11YX4:50787557-71ec-4394-935c-690296c7624e;2",
+      "internal_card_type": "MC",
+      "internal_card_scheme": "MASTER",
+      "internal_bin": "535562",
+      "installments_count": 1,
+      "id": "50787557-71ec-4394-935c-690296c7624e",
+      "entry_mode": "contactless",
+      "currency": "EUR",
+      "card_type": "MASTERCARD",
+      "amount": 3
     }
   ]
 }

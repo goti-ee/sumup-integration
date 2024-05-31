@@ -181,6 +181,23 @@ defmodule SumupIntegration.Sales.SalesTest do
                  price_category_name: "Crew",
                  event_name: nil,
                  sale_type: :crew
+               },
+               %SumupIntegration.Sales.SaleTransaction{
+                 transaction_id: "50787557-71ec-4394-935c-690296c7624e",
+                 status: :successful,
+                 sold_by: "jane.doe@goti.test.ee",
+                 created_at: ~U[2023-01-15 23:01:33Z],
+                 created_at_local: ~N[2023-01-16 01:01:33],
+                 currency: "EUR",
+                 amount: 3.0,
+                 amount_gross: 3.0,
+                 tip_amount: +0.0,
+                 description: "Orange lemonade",
+                 payment_method: :cash,
+                 quantity: 1,
+                 price_category_name: "Member ",
+                 event_name: nil,
+                 sale_type: :member
                }
              ] = transactions
     end
@@ -357,6 +374,23 @@ defmodule SumupIntegration.Sales.SalesTest do
                  payment_method: :cash,
                  quantity: 1,
                  price_category_name: "",
+                 event_name: nil,
+                 sale_type: nil
+               },
+               %SumupIntegration.Sales.SaleTransaction{
+                 transaction_id: "50787557-71ec-4394-935c-690296c7624e",
+                 status: :successful,
+                 sold_by: "jane.doe@goti.test.ee",
+                 created_at: ~U[2023-01-15 23:01:33Z],
+                 created_at_local: nil,
+                 currency: "EUR",
+                 amount: 3.0,
+                 amount_gross: 3.0,
+                 tip_amount: +0.0,
+                 description: "Orange lemonade",
+                 payment_method: :cash,
+                 quantity: 1,
+                 price_category_name: "Member ",
                  event_name: nil,
                  sale_type: nil
                }

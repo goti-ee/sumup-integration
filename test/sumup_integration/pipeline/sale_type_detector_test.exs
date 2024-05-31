@@ -49,6 +49,12 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetectorTest do
       assert [%SaleTransaction{sale_type: :crew}] = SaleTypeDetector.run([transaction])
     end
 
+    test "marks member sales as :member ignoring casing" do
+      transaction = build(:sale_transaction, price_category_name: "Member", sale_type: nil)
+
+      assert [%SaleTransaction{sale_type: :member}] = SaleTypeDetector.run([transaction])
+    end
+
     test "marks sales that contain 'Crew' in the position description as :crew" do
       transaction =
         build(:sale_transaction,
@@ -116,6 +122,24 @@ defmodule SumupIntegration.Pipeline.SaleTypeDetectorTest do
                  sale_type: :free,
                  description: "Orange Ticket",
                  price_category_name: "Guest List"
+               }
+             ] =
+               SaleTypeDetector.run([transaction])
+    end
+
+    test "marks sales that contain 'Member' in the position description as :member" do
+      transaction =
+        build(:sale_transaction,
+          price_category_name: "",
+          description: "Orange Ticket Member",
+          sale_type: nil
+        )
+
+      assert [
+               %SaleTransaction{
+                 sale_type: :member,
+                 description: "Orange Ticket",
+                 price_category_name: "Member"
                }
              ] =
                SaleTypeDetector.run([transaction])

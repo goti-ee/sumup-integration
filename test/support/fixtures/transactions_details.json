@@ -397,5 +397,61 @@
     "vat_amount": 0,
     "vat_rates": [],
     "verification_method": "none"
+  },
+  "50787557-71ec-4394-935c-690296c7624e": {
+    "amount": 3,
+    "client_transaction_id": "urn:sumup:pos:sale:ABC11YX4:50787557-71ec-4394-935c-690296c7624e;2",
+    "currency": "EUR",
+    "device_info": {
+      "model": "iPhone12,1",
+      "name": "iPhone",
+      "system_name": "iOS",
+      "system_version": "16.5",
+      "uuid": "A3D5447C-4FFC-49F6-C513-92FC87F1AE8B"
+    },
+    "entry_mode": "none",
+    "events": [],
+    "horizontal_accuracy": 35,
+    "id": "50787557-71ec-4394-935c-690296c7624e",
+    "installments_count": 1,
+    "internal_id": 6066022095,
+    "lat": 0,
+    "links": [],
+    "local_time": "2023-01-15T23:01:33.594Z",
+    "location": {
+      "horizontal_accuracy": 35,
+      "lat": 0,
+      "lon": 0
+    },
+    "lon": 0,
+    "merchant_code": "ABC11YX4",
+    "merchant_id": 0,
+    "payment_type": "POS",
+    "payout_plan": "SINGLE_PAYMENT",
+    "payout_type": "BANK_ACCOUNT",
+    "payouts_received": 0,
+    "payouts_total": 0,
+    "product_summary": "1 x Orange lemonade",
+    "products": [
+      {
+        "description": "Member ",
+        "name": "Orange lemonade",
+        "price": 3,
+        "quantity": 1,
+        "total_price": 3
+      }
+    ],
+    "simple_payment_type": "POS",
+    "simple_status": "SUCCESSFUL",
+    "status": "SUCCESSFUL",
+    "tax_enabled": false,
+    "timestamp": "2023-01-15T23:01:33.594Z",
+    "tip_amount": 0,
+    "transaction_code": "TCTZ30FF7C",
+    "transaction_events": [],
+    "username": "jane.doe@goti.test.ee",
+    "vat_amount": 0,
+    "vat_rates": [],
+    "verification_method": "none"
   }
 }

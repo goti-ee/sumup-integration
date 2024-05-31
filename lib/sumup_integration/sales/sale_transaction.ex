@@ -8,7 +8,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
 
   @type transaction_status :: :successful | :failed | :refunded | :pending | :unknown
   @type payment_method :: :card | :cash | :unknown
-  @type sale_type :: :public | :crew | :free
+  @type sale_type :: :public | :crew | :free | :member
 
   @type t :: %__MODULE__{
           transaction_id: String.t(),
@@ -44,7 +44,7 @@ defmodule SumupIntegration.Sales.SaleTransaction do
     field(:quantity, :integer)
     field(:price_category_name, :string, default: "")
     field(:event_name, :string)
-    field(:sale_type, Ecto.Enum, values: [:public, :crew, :free])
+    field(:sale_type, Ecto.Enum, values: [:public, :crew, :free, :member])
   end
 
   @spec get_last_transaction_id!() :: String.t() | nil
