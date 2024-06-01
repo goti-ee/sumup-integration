@@ -24,6 +24,18 @@ defmodule SumupIntegration.Factory do
     }
   end
 
+  def build(:event) do
+    start_at =
+      Faker.DateTime.backward(60)
+      |> DateTime.truncate(:second)
+
+    %SumupIntegration.Event{
+      name: Faker.Pokemon.name(),
+      start_at: start_at,
+      end_at: DateTime.add(start_at, 1)
+    }
+  end
+
   def build(factory_name, attributes) do
     factory_name |> build() |> struct!(attributes)
   end

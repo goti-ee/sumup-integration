@@ -21,4 +21,14 @@ defmodule SumupIntegration.Event do
 
     SumupIntegration.Repo.all(query)
   end
+
+  @spec delete_by_id(integer()) :: {non_neg_integer(), nil | term()}
+  @spec delete_by_id(list(integer())) :: {non_neg_integer(), nil | term()}
+  def delete_by_id(ids) when is_list(ids) do
+    query = from(e in __MODULE__, where: e.id in ^ids)
+
+    SumupIntegration.Repo.delete_all(query)
+  end
+
+  def delete_by_id(id) when is_integer(id), do: delete_by_id([id])
 end

@@ -4,6 +4,7 @@ defmodule SumupIntegration.Help do
   """
 
   alias SumupIntegration.Sales
+  alias SumupIntegration.Event
 
   defmacro __using__(_opts) do
     quote do
@@ -36,6 +37,8 @@ defmodule SumupIntegration.Help do
     end)
     |> then(&SumupIntegration.Repo.insert_all(SumupIntegration.Event, &1))
   end
+
+  def remove_event(idOrIds), do: Event.delete_by_id(idOrIds)
 
   def trigger_tick(sync_type \\ "incremental") do
     %{"type" => sync_type}
