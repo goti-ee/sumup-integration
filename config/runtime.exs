@@ -9,3 +9,10 @@ if config_env() != :test do
       auth: {:bearer, System.fetch_env!("GOTI_SUMUP_API_KEY")}
     ]
 end
+
+config :opentelemetry_exporter,
+  otlp_protocol: :http_protobuf,
+  otlp_endpoint: "https://api.honeycomb.io:443",
+  otlp_headers: [
+    {"x-honeycomb-team", System.fetch_env!("HONEYCOMB_API_KEY")}
+  ]

@@ -15,3 +15,7 @@ config :sumup_integration, Oban,
        {"@weekly", SumupIntegration.Worker, args: %{"type" => "full"}}
      ]}
   ]
+
+config :opentelemetry,
+  span_processor: :batch,
+  exporter: :otlp

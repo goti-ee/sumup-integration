@@ -7,6 +7,13 @@ defmodule SumupIntegration.MixProject do
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
+      releases: [
+        sumup_integration: [
+          applications: [
+            opentelemetry: :temporary
+          ]
+        ]
+      ],
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env())
     ]
@@ -31,6 +38,11 @@ defmodule SumupIntegration.MixProject do
       {:oban, "~> 2.17"},
       {:testcontainers, "~> 1.8"},
       {:tzdata, "~> 1.1"},
+      {:opentelemetry, "~> 1.3"},
+      {:opentelemetry_api, "~> 1.2"},
+      {:opentelemetry_exporter, "~> 1.6"},
+      {:opentelemetry_ecto, "~> 1.2"},
+      {:opentelemetry_oban, "~> 1.1"},
       {:plug, "~> 1.0", only: :test},
       {:faker, "~> 0.18", only: :test}
     ]

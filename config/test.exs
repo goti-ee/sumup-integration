@@ -17,3 +17,5 @@ config :sumup_integration, SumupIntegration.Sales.ApiTransaction,
   transaction_req_options: [
     plug: {Req.Test, SumupIntegration.Sales.ApiTransaction.TransactionEndpoint}
   ]
+
+config :opentelemetry, traces_exporter: :none

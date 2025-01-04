@@ -5,3 +5,5 @@ config :sumup_integration, SumupIntegration.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost"
+
+config :opentelemetry, traces_exporter: :none

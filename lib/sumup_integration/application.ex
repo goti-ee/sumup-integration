@@ -7,6 +7,8 @@ defmodule SumupIntegration.Application do
   def start(_type, _args) do
     Oban.Telemetry.attach_default_logger()
 
+    SumupIntegration.Telemetry.setup()
+
     if Application.get_env(:sumup_integration, :testcontainers, false) do
       {:ok, _container} = Testcontainers.Ecto.postgres_container(app: :sumup_integration)
     end
